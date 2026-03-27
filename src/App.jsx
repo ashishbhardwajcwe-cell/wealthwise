@@ -1,3 +1,4 @@
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 import { useState, useEffect, useCallback, useRef } from "react";
 import {
   PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid,
@@ -7,26 +8,13 @@ import {
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // SUPABASE CONFIG — Replace with your real credentials
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-const SUPABASE_URL = "https://YOUR_PROJECT.supabase.co";
-const SUPABASE_ANON_KEY = "YOUR_ANON_KEY";
-const DEMO_MODE = true; // Set false when Supabase is configured
+const SUPABASE_URL = "https://hbddsvwghboftjsgtate.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhiZGRzdndnaGJvZnRqc2d0YXRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1NDA0NjMsImV4cCI6MjA5MDExNjQ2M30.kTyLJ1WTh2jyau0cqGsaxMfGwhwBwQOGU-eyMJiyNEs";
+const DEMO_MODE = false; // Set false when Supabase is configured
 
 // Mock Supabase for demo
-const mockDB = { plans: [] };
-const supabase = DEMO_MODE ? {
-  auth: {
-    signInWithOAuth: async () => ({ error: null }),
-    signOut: async () => ({ error: null }),
-    getSession: async () => ({ data: { session: null } }),
-    onAuthStateChange: (cb) => ({ data: { subscription: { unsubscribe: () => {} } } }),
-  },
-  from: (table) => ({
-    insert: async (data) => { mockDB[table] = [...(mockDB[table]||[]), ...data]; return { error: null }; },
-    select: () => ({ eq: () => ({ order: () => ({ data: mockDB[table] || [], error: null }) }) }),
-    update: (data) => ({ eq: () => ({ error: null }) }),
-    upsert: async (data) => { mockDB[table] = data; return { error: null }; },
-  }),
-} : null; // Real Supabase client would go here
+import { createClient } from '@supabase/supabase-js';
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY); // Real Supabase client would go here
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // THEME — Luxury Financial Aesthetic
