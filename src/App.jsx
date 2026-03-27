@@ -1,22 +1,17 @@
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+import { createClient } from '@supabase/supabase-js';
 import { useState, useEffect, useCallback, useRef } from "react";
 import {
   PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid,
   Tooltip, Legend, ResponsiveContainer, AreaChart, Area
 } from "recharts";
 
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// SUPABASE CONFIG — Replace with your real credentials
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// SUPABASE CONFIG
 const SUPABASE_URL = "https://hbddsvwghboftjsgtate.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhiZGRzdndnaGJvZnRqc2d0YXRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1NDA0NjMsImV4cCI6MjA5MDExNjQ2M30.kTyLJ1WTh2jyau0cqGsaxMfGwhwBwQOGU-eyMJiyNEs";
-const DEMO_MODE = false; // Set false when Supabase is configured
+const DEMO_MODE = false;
 
-// Mock Supabase for demo
-import { createClient } from '@supabase/supabase-js';
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY); // Real Supabase client would go here
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // THEME — Luxury Financial Aesthetic
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 const T = {
