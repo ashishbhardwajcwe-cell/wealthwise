@@ -378,8 +378,25 @@ const Dashboard = ({ user, onLogout }) => {
 
   const requestAIAnalysis = async () => {
     setAiLoading(true);
-    // Simulate AI analysis (in production, call your Supabase Edge Function → Claude API)
-    await new Promise(r => setTimeout(r, 3000));
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) { alert("Please sign in to use AI analysis"); setAiLoading(false); return; }
+      const response = await fetch(
+        SUPABASE_URL + "/functions/v1/ai-analysis",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Authorization": "Bearer " + session.access_token },
+          body: JSON.stringify({ planData: data }),
+        }
+      );
+      const result = await response.json();
+      if (result.error) { alert(result.error === "PRO_REQUIRED" ? "Upgrade to Pro for unlimited AI analyses" : result.error); setAiLoading(false); return; }
+      setAiAnalysis(result.analysis);
+      setAiLoading(false);
+      return;
+    } catch (err) { console.error("AI error:", err); }
+    // Fallback to simulated if Edge Function fails
+    await new Promise(r => setTimeout(r, 2000));
     const age = getAge();
     const totalInc = data.salaryMonthly + data.otherIncomeMonthly;
     const totalExp = data.householdExp + data.childcareExp + data.giftsExp + data.vacationExp + data.otherExp;
