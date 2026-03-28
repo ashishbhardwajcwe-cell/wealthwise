@@ -142,77 +142,137 @@ const Badge = ({ children, color=T.teal }) => (
 );
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// GOOGLE SIGN-IN MODAL
+// AUTH MODAL
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 const AuthModal = ({ show, onClose, onSignIn, onDemo }) => {
+  const [mode, setMode] = useState("register"); // register | signin
   const [loading, setLoading] = useState(false);
+  const [form, setForm] = useState({ name:"", mobile:"", email:"", password:"" });
+  const [error, setError] = useState("");
   if (!show) return null;
 
+  const set = (k) => (e) => { setForm(p => ({...p, [k]: e.target.value})); setError(""); };
+
   const handleGoogle = async () => {
-    setLoading(true);
-    if (DEMO_MODE) {
-      await new Promise(r => setTimeout(r, 1200));
-      onSignIn({ id:"demo-user", email:"demo@wealthwise.in", user_metadata:{ full_name:"Demo User", avatar_url: null } });
-    } else {
-      const { error } = await supabase.auth.signInWithOAuth({ provider:"google", options:{ redirectTo: window.location.origin } });
-      if (error) alert(error.message);
-    }
-    setLoading(false);
+    setLoading(true); setError("");
+    const { error } = await supabase.auth.signInWithOAuth({ provider:"google", options:{ redirectTo: window.location.origin } });
+    if (error) { setError(error.message); setLoading(false); }
   };
 
+  const handleSubmit = async () => {
+    setError("");
+    if (mode === "register") {
+      if (!form.name.trim()) return setError("Full name is required");
+      if (!form.email.trim()) return setError("Email is required");
+      if (form.password.length < 6) return setError("Password must be at least 6 characters");
+      setLoading(true);
+      const { data, error } = await supabase.auth.signUp({
+        email: form.email.trim(),
+        password: form.password,
+        options: { data: { full_name: form.name.trim(), phone: form.mobile.trim() } }
+      });
+      setLoading(false);
+      if (error) return setError(error.message);
+      if (data.user) onSignIn(data.user);
+    } else {
+      if (!form.email.trim() || !form.password) return setError("Email and password required");
+      setLoading(true);
+      const { data, error } = await supabase.auth.signInWithPassword({ email: form.email.trim(), password: form.password });
+      setLoading(false);
+      if (error) return setError(error.message);
+      if (data.user) onSignIn(data.user);
+    }
+  };
+
+  const inputStyle = {
+    width:"100%", padding:"13px 16px", borderRadius:10,
+    border:`1.5px solid rgba(255,255,255,0.1)`,
+    background:"rgba(255,255,255,0.06)", color:T.white, fontSize:15,
+    fontFamily:BODY, outline:"none", transition:"border-color 0.2s",
+  };
+  const labelStyle = { display:"block", fontSize:11, fontWeight:700, color:`${T.white}70`, letterSpacing:"0.08em", textTransform:"uppercase", marginBottom:6 };
+
   return (
-    <div className="fadeIn" style={{ position:"fixed", inset:0, zIndex:9999, display:"flex", alignItems:"center", justifyContent:"center", background:"rgba(10,22,40,0.6)", backdropFilter:"blur(8px)" }}>
-      <div className="scaleIn" style={{ background:T.white, borderRadius:24, padding:0, width:"min(440px,92vw)", overflow:"hidden", boxShadow:"0 24px 80px rgba(10,22,40,0.25)" }}>
-        {/* Header */}
-        <div style={{ background:`linear-gradient(135deg, ${T.navy} 0%, ${T.ocean} 100%)`, padding:"36px 32px 28px", textAlign:"center", position:"relative" }}>
-          <div style={{ position:"absolute", top:-40, right:-40, width:120, height:120, borderRadius:"50%", background:`${T.gold}10` }} />
-          <div style={{ position:"absolute", bottom:-20, left:-20, width:80, height:80, borderRadius:"50%", background:`${T.gold}08` }} />
-          <div style={{ position:"relative", zIndex:1 }}>
-            <div style={{ margin:"0 auto 16px", display:"flex", alignItems:"center", justifyContent:"center" }}>
-              <img src="/auris-logo.png" alt="Auris" style={{ height:80, objectFit:"contain" }} />
-            </div>
-            <h2 style={{ fontFamily:DISPLAY, fontSize:26, fontWeight:700, color:T.white, marginBottom:4 }}>Welcome to WealthWise</h2>
-            <p style={{ color:`${T.white}90`, fontSize:14 }}>Sign in to create your financial independence plan</p>
-          </div>
-        </div>
+    <div className="fadeIn" style={{ position:"fixed", inset:0, zIndex:9999, display:"flex", alignItems:"center", justifyContent:"center", background:"rgba(5,12,25,0.75)", backdropFilter:"blur(10px)" }}>
+      <div className="scaleIn" style={{ background:"#0D1B2E", borderRadius:20, padding:"36px 32px 28px", width:"min(420px,94vw)", boxShadow:"0 32px 80px rgba(0,0,0,0.5)", border:"1px solid rgba(255,255,255,0.07)", position:"relative" }}>
 
-        {/* Body */}
-        <div style={{ padding:"32px 32px 28px" }}>
-          <button onClick={handleGoogle} disabled={loading} className="hover-lift" style={{
-            width:"100%", padding:"14px 24px", borderRadius:12, border:`1.5px solid ${T.silver}50`,
-            background:T.white, display:"flex", alignItems:"center", justifyContent:"center", gap:12,
-            fontSize:16, fontWeight:600, color:T.navy, cursor:"pointer", transition:"all 0.3s",
-            opacity: loading ? 0.7 : 1
-          }}>
-            {loading ? (
-              <div style={{ width:22, height:22, border:`3px solid ${T.silver}`, borderTopColor:T.gold, borderRadius:"50%", animation:"pulse 0.8s infinite" }} />
-            ) : (
-              <svg width="22" height="22" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
-            )}
-            {loading ? "Signing in..." : "Continue with Google"}
-          </button>
-
-          <div style={{ display:"flex", alignItems:"center", gap:10, margin:"20px 0 4px" }}>
-            <div style={{ flex:1, height:1, background:`${T.silver}50` }} />
-            <span style={{ fontSize:12, color:T.steel, fontWeight:500 }}>or</span>
-            <div style={{ flex:1, height:1, background:`${T.silver}50` }} />
-          </div>
-
-          <button onClick={onDemo} className="hover-lift" style={{
-            width:"100%", padding:"13px 24px", borderRadius:12, border:`1.5px solid ${T.gold}40`,
-            background:`${T.gold}08`, display:"flex", alignItems:"center", justifyContent:"center", gap:10,
-            fontSize:15, fontWeight:600, color:T.goldDim, cursor:"pointer", transition:"all 0.3s", marginTop:8
-          }}>
-            <span style={{ fontSize:18 }}>👀</span> Try Demo — No Sign In Required
-          </button>
-
-          <p style={{ textAlign:"center", marginTop:16, fontSize:11, color:T.steel, lineHeight:1.6 }}>
-            Demo uses sample data. Sign in with Google to save your real plan.
+        {/* Title */}
+        <div style={{ textAlign:"center", marginBottom:28 }}>
+          <h2 style={{ fontFamily:DISPLAY, fontSize:24, fontWeight:700, color:T.white, marginBottom:6 }}>
+            {mode === "register" ? "Create your account" : "Welcome back"}
+          </h2>
+          <p style={{ fontSize:13, color:`${T.white}60` }}>
+            {mode === "register" ? "Sign in to access exclusive resources & services" : "Sign in to continue to WealthWise"}
           </p>
         </div>
 
+        {/* Fields */}
+        <div style={{ display:"flex", flexDirection:"column", gap:16 }}>
+          {mode === "register" && (
+            <div>
+              <label style={labelStyle}>Full Name</label>
+              <input value={form.name} onChange={set("name")} placeholder="Rajesh Kumar" style={inputStyle} />
+            </div>
+          )}
+          {mode === "register" && (
+            <div>
+              <label style={labelStyle}>Mobile Number</label>
+              <input value={form.mobile} onChange={set("mobile")} placeholder="+91 98765 43210" type="tel" style={inputStyle} />
+            </div>
+          )}
+          <div>
+            <label style={labelStyle}>Email Address</label>
+            <input value={form.email} onChange={set("email")} placeholder="you@example.com" type="email" style={inputStyle} />
+          </div>
+          <div>
+            <label style={labelStyle}>Password</label>
+            <input value={form.password} onChange={set("password")} placeholder="Min. 6 characters" type="password" style={inputStyle} />
+          </div>
+        </div>
+
+        {error && <p style={{ color:"#ff6b6b", fontSize:13, marginTop:12, textAlign:"center" }}>{error}</p>}
+
+        {/* Primary CTA */}
+        <button onClick={handleSubmit} disabled={loading} className="btn-gold" style={{ width:"100%", padding:"14px", borderRadius:12, fontSize:16, fontWeight:700, marginTop:20, opacity: loading ? 0.7 : 1, cursor: loading ? "not-allowed" : "pointer" }}>
+          {loading ? <div style={{ width:20, height:20, border:`3px solid ${T.navy}40`, borderTopColor:T.navy, borderRadius:"50%", animation:"pulse 0.8s infinite", margin:"0 auto" }} /> : mode === "register" ? "Create Account" : "Sign In"}
+        </button>
+
+        {/* Divider */}
+        <div style={{ display:"flex", alignItems:"center", gap:12, margin:"18px 0" }}>
+          <div style={{ flex:1, height:1, background:"rgba(255,255,255,0.1)" }} />
+          <span style={{ fontSize:12, color:`${T.white}40`, fontWeight:500 }}>or</span>
+          <div style={{ flex:1, height:1, background:"rgba(255,255,255,0.1)" }} />
+        </div>
+
+        {/* Google */}
+        <button onClick={handleGoogle} disabled={loading} style={{
+          width:"100%", padding:"13px 24px", borderRadius:12, border:"1.5px solid rgba(255,255,255,0.12)",
+          background:"rgba(255,255,255,0.05)", display:"flex", alignItems:"center", justifyContent:"center", gap:10,
+          fontSize:15, fontWeight:600, color:T.white, cursor:"pointer", transition:"all 0.3s"
+        }}>
+          <svg width="20" height="20" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+          Continue with Google
+        </button>
+
+        {/* Demo */}
+        <button onClick={onDemo} style={{
+          width:"100%", padding:"11px", borderRadius:12, border:`1px solid ${T.gold}30`,
+          background:"transparent", fontSize:13, fontWeight:600, color:`${T.gold}CC`,
+          cursor:"pointer", marginTop:10, transition:"all 0.2s"
+        }}>
+          👀 Try Demo — No Sign In Required
+        </button>
+
+        {/* Toggle */}
+        <p style={{ textAlign:"center", marginTop:18, fontSize:13, color:`${T.white}50` }}>
+          {mode === "register" ? "Already have an account? " : "Don't have an account? "}
+          <span onClick={()=>{ setMode(mode==="register"?"signin":"register"); setError(""); }} style={{ color:T.goldLight, fontWeight:600, cursor:"pointer" }}>
+            {mode === "register" ? "Sign In" : "Create Account"}
+          </span>
+        </p>
+
         {/* Close */}
-        <button onClick={onClose} style={{ position:"absolute", top:16, right:16, background:`${T.white}20`, border:"none", borderRadius:8, width:32, height:32, display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", color:T.white, fontSize:18, zIndex:2 }}>✕</button>
+        <button onClick={onClose} style={{ position:"absolute", top:14, right:14, background:"rgba(255,255,255,0.08)", border:"none", borderRadius:8, width:30, height:30, display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", color:`${T.white}80`, fontSize:16 }}>✕</button>
       </div>
     </div>
   );
