@@ -169,7 +169,7 @@ const AuthModal = ({ show, onClose, onSignIn }) => {
           <div style={{ position:"absolute", bottom:-20, left:-20, width:80, height:80, borderRadius:"50%", background:`${T.gold}08` }} />
           <div style={{ position:"relative", zIndex:1 }}>
             <div style={{ margin:"0 auto 16px", display:"flex", alignItems:"center", justifyContent:"center" }}>
-              <img src="/auris-logo.svg" alt="Auris" style={{ height:72, objectFit:"contain", filter:"drop-shadow(0 4px 12px rgba(201,168,76,0.3))" }} />
+              <img src="/auris-logo.png" alt="Auris" style={{ height:80, objectFit:"contain" }} />
             </div>
             <h2 style={{ fontFamily:DISPLAY, fontSize:26, fontWeight:700, color:T.white, marginBottom:4 }}>Welcome to WealthWise</h2>
             <p style={{ color:`${T.white}90`, fontSize:14 }}>Sign in to create your financial independence plan</p>
@@ -210,7 +210,7 @@ const AuthModal = ({ show, onClose, onSignIn }) => {
 const Navbar = ({ user, onAuthClick, onLogout, onLogoClick }) => (
   <nav className="glass" style={{ position:"sticky", top:0, zIndex:100, padding:"12px 24px", display:"flex", justifyContent:"space-between", alignItems:"center", borderBottom:`1px solid ${T.gold}15` }}>
     <div onClick={onLogoClick} style={{ display:"flex", alignItems:"center", gap:10, cursor:"pointer" }}>
-      <img src="/auris-logo.svg" alt="Auris" style={{ height:40, objectFit:"contain" }} />
+      <img src="/auris-logo.png" alt="Auris" style={{ height:44, objectFit:"contain" }} />
     </div>
     <div style={{ display:"flex", alignItems:"center", gap:12 }}>
       {user ? (
