@@ -168,7 +168,9 @@ const AuthModal = ({ show, onClose, onSignIn }) => {
           <div style={{ position:"absolute", top:-40, right:-40, width:120, height:120, borderRadius:"50%", background:`${T.gold}10` }} />
           <div style={{ position:"absolute", bottom:-20, left:-20, width:80, height:80, borderRadius:"50%", background:`${T.gold}08` }} />
           <div style={{ position:"relative", zIndex:1 }}>
-            <div style={{ width:56, height:56, borderRadius:16, background:`linear-gradient(135deg, ${T.gold}, ${T.goldLight})`, margin:"0 auto 16px", display:"flex", alignItems:"center", justifyContent:"center", fontSize:28, boxShadow:`0 8px 24px ${T.gold}30` }}>💎</div>
+            <div style={{ margin:"0 auto 16px", display:"flex", alignItems:"center", justifyContent:"center" }}>
+              <img src="/auris-logo.png" alt="Auris" style={{ height:72, objectFit:"contain", filter:"drop-shadow(0 4px 12px rgba(201,168,76,0.3))" }} />
+            </div>
             <h2 style={{ fontFamily:DISPLAY, fontSize:26, fontWeight:700, color:T.white, marginBottom:4 }}>Welcome to WealthWise</h2>
             <p style={{ color:`${T.white}90`, fontSize:14 }}>Sign in to create your financial independence plan</p>
           </div>
@@ -190,19 +192,6 @@ const AuthModal = ({ show, onClose, onSignIn }) => {
             {loading ? "Signing in..." : "Continue with Google"}
           </button>
 
-          <div style={{ display:"flex", alignItems:"center", gap:16, margin:"24px 0" }}>
-            <div style={{ flex:1, height:1, background:`${T.silver}40` }} />
-            <span style={{ fontSize:12, color:T.steel, fontWeight:500 }}>or continue as guest</span>
-            <div style={{ flex:1, height:1, background:`${T.silver}40` }} />
-          </div>
-
-          <button onClick={() => onSignIn({ id:"guest", email:"guest@local", user_metadata:{ full_name:"Guest User" } })} style={{
-            width:"100%", padding:"12px 24px", borderRadius:12, border:`1.5px solid ${T.silver}40`,
-            background:"transparent", fontSize:14, fontWeight:600, color:T.slate, cursor:"pointer", transition:"all 0.3s"
-          }}>
-            Try without signing in
-          </button>
-
           <p style={{ textAlign:"center", marginTop:20, fontSize:12, color:T.steel, lineHeight:1.6 }}>
             Your financial data is encrypted and stored securely.<br/>We never share your information with third parties.
           </p>
@@ -221,8 +210,7 @@ const AuthModal = ({ show, onClose, onSignIn }) => {
 const Navbar = ({ user, onAuthClick, onLogout, onLogoClick }) => (
   <nav className="glass" style={{ position:"sticky", top:0, zIndex:100, padding:"12px 24px", display:"flex", justifyContent:"space-between", alignItems:"center", borderBottom:`1px solid ${T.gold}15` }}>
     <div onClick={onLogoClick} style={{ display:"flex", alignItems:"center", gap:10, cursor:"pointer" }}>
-      <div style={{ width:36, height:36, borderRadius:10, background:`linear-gradient(135deg, ${T.navy}, ${T.ocean})`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:18, color:T.gold }}>💎</div>
-      <span style={{ fontFamily:DISPLAY, fontSize:22, fontWeight:700, color:T.navy }}>Wealth<span style={{ color:T.gold }}>Wise</span></span>
+      <img src="/auris-logo.png" alt="Auris" style={{ height:40, objectFit:"contain" }} />
     </div>
     <div style={{ display:"flex", alignItems:"center", gap:12 }}>
       {user ? (
