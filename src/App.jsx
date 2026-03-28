@@ -144,7 +144,7 @@ const Badge = ({ children, color=T.teal }) => (
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // GOOGLE SIGN-IN MODAL
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-const AuthModal = ({ show, onClose, onSignIn }) => {
+const AuthModal = ({ show, onClose, onSignIn, onDemo }) => {
   const [loading, setLoading] = useState(false);
   if (!show) return null;
 
@@ -192,8 +192,22 @@ const AuthModal = ({ show, onClose, onSignIn }) => {
             {loading ? "Signing in..." : "Continue with Google"}
           </button>
 
-          <p style={{ textAlign:"center", marginTop:20, fontSize:12, color:T.steel, lineHeight:1.6 }}>
-            Your financial data is encrypted and stored securely.<br/>We never share your information with third parties.
+          <div style={{ display:"flex", alignItems:"center", gap:10, margin:"20px 0 4px" }}>
+            <div style={{ flex:1, height:1, background:`${T.silver}50` }} />
+            <span style={{ fontSize:12, color:T.steel, fontWeight:500 }}>or</span>
+            <div style={{ flex:1, height:1, background:`${T.silver}50` }} />
+          </div>
+
+          <button onClick={onDemo} className="hover-lift" style={{
+            width:"100%", padding:"13px 24px", borderRadius:12, border:`1.5px solid ${T.gold}40`,
+            background:`${T.gold}08`, display:"flex", alignItems:"center", justifyContent:"center", gap:10,
+            fontSize:15, fontWeight:600, color:T.goldDim, cursor:"pointer", transition:"all 0.3s", marginTop:8
+          }}>
+            <span style={{ fontSize:18 }}>👀</span> Try Demo — No Sign In Required
+          </button>
+
+          <p style={{ textAlign:"center", marginTop:16, fontSize:11, color:T.steel, lineHeight:1.6 }}>
+            Demo uses sample data. Sign in with Google to save your real plan.
           </p>
         </div>
 
@@ -207,13 +221,19 @@ const AuthModal = ({ show, onClose, onSignIn }) => {
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // NAVBAR
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-const Navbar = ({ user, onAuthClick, onLogout, onLogoClick }) => (
+const Navbar = ({ user, isDemo, onAuthClick, onLogout, onLogoClick }) => (
   <nav className="glass" style={{ position:"sticky", top:0, zIndex:100, padding:"12px 24px", display:"flex", justifyContent:"space-between", alignItems:"center", borderBottom:`1px solid ${T.gold}15` }}>
     <div onClick={onLogoClick} style={{ display:"flex", alignItems:"center", gap:10, cursor:"pointer" }}>
       <img src="/auris-logo.png" alt="Auris" style={{ height:44, objectFit:"contain" }} />
     </div>
     <div style={{ display:"flex", alignItems:"center", gap:12 }}>
-      {user ? (
+      {isDemo ? (
+        <>
+          <span style={{ fontSize:12, fontWeight:700, color:T.gold, background:`${T.gold}15`, padding:"4px 12px", borderRadius:20, letterSpacing:"0.05em" }}>DEMO MODE</span>
+          <button onClick={onAuthClick} className="btn-gold" style={{ padding:"8px 20px", borderRadius:10, fontSize:13 }}>Sign In to Save</button>
+          <button onClick={onLogout} style={{ padding:"8px 14px", borderRadius:8, fontSize:13, background:"transparent", border:`1px solid ${T.silver}50`, color:T.slate, cursor:"pointer" }}>Exit Demo</button>
+        </>
+      ) : user ? (
         <>
           <div style={{ display:"flex", alignItems:"center", gap:8 }}>
             <div style={{ width:32, height:32, borderRadius:10, background:`linear-gradient(135deg, ${T.gold}, ${T.goldLight})`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:14, fontWeight:800, color:T.navy }}>
@@ -312,7 +332,7 @@ const Landing = ({ onGetStarted, onAuth }) => (
 // DEFAULT FORM DATA
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 const defaultData = {
-  name:"", dob:"1985-01-01", retirementAge:55, lifeExpectancy:85, city:"", riskProfile:"Balanced",
+  name:"", dob:"1990-01-01", retirementAge:55, lifeExpectancy:85, city:"", riskProfile:"Balanced",
   spouseName:"", spouseDob:"",
   salaryMonthly:150000, otherIncomeMonthly:0, incomeGrowth:5,
   householdExp:50000, childcareExp:15000, giftsExp:5000, vacationExp:10000, otherExp:5000,
@@ -331,6 +351,55 @@ const defaultData = {
 };
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// DEMO DATA — realistic pre-filled Indian user profile
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+const demoData = {
+  name:"Rahul Sharma", dob:"1988-06-15", retirementAge:55, lifeExpectancy:85, city:"Mumbai", riskProfile:"Balanced",
+  spouseName:"Priya Sharma", spouseDob:"1990-03-22",
+  salaryMonthly:200000, otherIncomeMonthly:15000, incomeGrowth:8,
+  householdExp:60000, childcareExp:20000, giftsExp:8000, vacationExp:15000, otherExp:7000,
+  generalInflation:6, educationInflation:10, medicalInflation:12,
+  equityReturn:13, debtReturn:7, goldReturn:8, realEstateReturn:5,
+  equityAlloc:70, debtAlloc:30,
+  assets:[
+    { name:"Mutual Funds (SIP)", type:"Equity", value:1800000 },
+    { name:"PPF / EPF", type:"Debt", value:2200000 },
+    { name:"Stocks (Direct)", type:"Equity", value:600000 },
+    { name:"Fixed Deposits", type:"Debt", value:500000 },
+    { name:"Savings Account", type:"Debt", value:300000 },
+    { name:"Gold ETF", type:"Gold", value:400000 },
+  ],
+  physicalAssets:[
+    { name:"Self-Occupied Home (Mumbai)", value:12000000 },
+    { name:"Gold Jewellery", value:800000 },
+  ],
+  liabilities:[
+    { name:"Home Loan", emi:45000, outstanding:4500000, rate:8.5 },
+  ],
+  goals:[
+    { name:"Child's Higher Education", year:2034, currentValue:3000000, inflation:10, priority:"High" },
+    { name:"Retirement Corpus", year:2043, currentValue:15000000, inflation:6, priority:"High", recurring:true },
+    { name:"Daughter's Wedding", year:2040, currentValue:2500000, inflation:7, priority:"Medium" },
+    { name:"Second Home / Upgrade", year:2038, currentValue:8000000, inflation:5, priority:"Low" },
+  ],
+  sipMonthly:40000, pfMonthly:20000,
+};
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// DEMO BANNER
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+const DemoBanner = ({ onSignIn }) => (
+  <div style={{ background:`linear-gradient(90deg, ${T.gold}22, ${T.goldLight}18, ${T.gold}22)`, borderBottom:`1px solid ${T.gold}30`, padding:"10px 24px", display:"flex", alignItems:"center", justifyContent:"center", gap:16, flexWrap:"wrap" }}>
+    <span style={{ fontSize:13, fontWeight:600, color:T.navy }}>
+      👀 You're exploring a <strong>Demo</strong> — data is sample only and won't be saved.
+    </span>
+    <button onClick={onSignIn} className="btn-gold" style={{ padding:"6px 20px", borderRadius:8, fontSize:13, fontWeight:700 }}>
+      Sign In to Save Your Real Plan →
+    </button>
+  </div>
+);
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // DASHBOARD (Form + Report)
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 const STEPS = [
@@ -341,10 +410,10 @@ const STEPS = [
   { id:"settings", title:"Settings", icon:"⚙️" },
 ];
 
-const Dashboard = ({ user, onLogout }) => {
+const Dashboard = ({ user, isDemo, onAuthClick, onLogout }) => {
   const [step, setStep] = useState(0);
-  const [data, setData] = useState(defaultData);
-  const [showReport, setShowReport] = useState(false);
+  const [data, setData] = useState(isDemo ? demoData : defaultData);
+  const [showReport, setShowReport] = useState(isDemo);
   const [aiLoading, setAiLoading] = useState(false);
   const [aiAnalysis, setAiAnalysis] = useState(null);
   const [showProModal, setShowProModal] = useState(false);
@@ -352,7 +421,7 @@ const Dashboard = ({ user, onLogout }) => {
   const update = (k,v) => setData(p => ({...p, [k]:v}));
 
   const saveToSupabase = async () => {
-    if (!DEMO_MODE && user?.id !== "guest") {
+    if (!DEMO_MODE && !isDemo && user?.id !== "guest") {
       await supabase.from("financial_plans").upsert([{ user_id: user.id, plan_data: data, updated_at: new Date().toISOString() }]);
     }
   };
@@ -365,6 +434,7 @@ const Dashboard = ({ user, onLogout }) => {
   };
 
   const requestAIAnalysis = async () => {
+    if (isDemo) { onAuthClick?.(); return; }
     setAiLoading(true);
     try {
       const { data: { session } } = await supabase.auth.getSession();
@@ -953,20 +1023,21 @@ const ReportView = ({ data, getAge, onBack, aiAnalysis, aiLoading, onRequestAI, 
 export default function App() {
   const [page, setPage] = useState("landing"); // landing | dashboard
   const [user, setUser] = useState(null);
+  const [isDemo, setIsDemo] = useState(false);
   const [showAuth, setShowAuth] = useState(false);
   const autoPopupDone = useRef(false);
 
-  // Auto-popup Google login after 20 seconds
+  // Auto-popup Google login after 20 seconds (skip in demo mode)
   useEffect(() => {
-    if (user || autoPopupDone.current) return;
+    if (user || isDemo || autoPopupDone.current) return;
     const timer = setTimeout(() => {
-      if (!user && !autoPopupDone.current) {
+      if (!user && !isDemo && !autoPopupDone.current) {
         autoPopupDone.current = true;
         setShowAuth(true);
       }
     }, 20000);
     return () => clearTimeout(timer);
-  }, [user]);
+  }, [user, isDemo]);
 
   // Check existing session on mount
   useEffect(() => {
@@ -975,7 +1046,7 @@ export default function App() {
         if (session?.user) { setUser(session.user); setPage("dashboard"); }
       });
       const { data: { subscription } } = supabase.auth.onAuthStateChange((_,session) => {
-        if (session?.user) { setUser(session.user); setPage("dashboard"); }
+        if (session?.user) { setUser(session.user); setIsDemo(false); setPage("dashboard"); }
       });
       return () => subscription.unsubscribe();
     }
@@ -983,24 +1054,35 @@ export default function App() {
 
   const handleSignIn = (u) => {
     setUser(u);
+    setIsDemo(false);
+    setShowAuth(false);
+    setPage("dashboard");
+  };
+
+  const handleDemo = () => {
+    setIsDemo(true);
     setShowAuth(false);
     setPage("dashboard");
   };
 
   const handleLogout = async () => {
-    if (!DEMO_MODE) await supabase.auth.signOut();
+    if (!DEMO_MODE && !isDemo) await supabase.auth.signOut();
     setUser(null);
+    setIsDemo(false);
     setPage("landing");
     autoPopupDone.current = false;
   };
 
+  const openAuth = () => setShowAuth(true);
+
   return (
     <div style={{ minHeight:"100vh", background:T.cream }}>
       <GlobalCSS />
-      <Navbar user={user} onAuthClick={()=>setShowAuth(true)} onLogout={handleLogout} onLogoClick={()=>setPage(user?"dashboard":"landing")} />
-      <AuthModal show={showAuth} onClose={()=>setShowAuth(false)} onSignIn={handleSignIn} />
-      {page === "landing" && <Landing onGetStarted={()=>{if(user)setPage("dashboard");else setShowAuth(true);}} onAuth={()=>setShowAuth(true)} />}
-      {page === "dashboard" && <Dashboard user={user} onLogout={handleLogout} />}
+      <Navbar user={user} isDemo={isDemo} onAuthClick={openAuth} onLogout={handleLogout} onLogoClick={()=>setPage(user||isDemo?"dashboard":"landing")} />
+      {isDemo && <DemoBanner onSignIn={openAuth} />}
+      <AuthModal show={showAuth} onClose={()=>setShowAuth(false)} onSignIn={handleSignIn} onDemo={handleDemo} />
+      {page === "landing" && <Landing onGetStarted={()=>{ if(user)setPage("dashboard"); else setShowAuth(true); }} onAuth={openAuth} />}
+      {page === "dashboard" && <Dashboard user={user} isDemo={isDemo} onAuthClick={openAuth} onLogout={handleLogout} />}
     </div>
   );
 }
