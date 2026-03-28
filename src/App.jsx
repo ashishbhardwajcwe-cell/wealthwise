@@ -185,29 +185,35 @@ const AuthModal = ({ show, onClose, onSignIn, onDemo }) => {
   };
 
   const inputStyle = {
-    width:"100%", padding:"13px 16px", borderRadius:10,
+    width:"100%", padding:"9px 14px", borderRadius:9,
     border:`1.5px solid rgba(255,255,255,0.1)`,
-    background:"rgba(255,255,255,0.06)", color:T.white, fontSize:15,
+    background:"rgba(255,255,255,0.06)", color:T.white, fontSize:14,
     fontFamily:BODY, outline:"none", transition:"border-color 0.2s",
   };
-  const labelStyle = { display:"block", fontSize:11, fontWeight:700, color:`${T.white}70`, letterSpacing:"0.08em", textTransform:"uppercase", marginBottom:6 };
+  const labelStyle = { display:"block", fontSize:10, fontWeight:700, color:`${T.white}60`, letterSpacing:"0.08em", textTransform:"uppercase", marginBottom:4 };
 
   return (
-    <div className="fadeIn" style={{ position:"fixed", inset:0, zIndex:9999, display:"flex", alignItems:"center", justifyContent:"center", background:"rgba(5,12,25,0.75)", backdropFilter:"blur(10px)" }}>
-      <div className="scaleIn" style={{ background:"#0D1B2E", borderRadius:20, padding:"36px 32px 28px", width:"min(420px,94vw)", boxShadow:"0 32px 80px rgba(0,0,0,0.5)", border:"1px solid rgba(255,255,255,0.07)", position:"relative" }}>
+    <div className="fadeIn" style={{ position:"fixed", inset:0, zIndex:9999, display:"flex", alignItems:"flex-start", justifyContent:"center", paddingTop:60, background:"rgba(5,12,25,0.70)", backdropFilter:"blur(8px)", overflowY:"auto" }}>
+      <div className="scaleIn" style={{ background:"#0D1B2E", borderRadius:18, padding:"20px 24px 20px", width:"min(380px,94vw)", boxShadow:"0 24px 60px rgba(0,0,0,0.5)", border:"1px solid rgba(255,255,255,0.07)", position:"relative", marginBottom:24 }}>
+
+        {/* Brand */}
+        <div style={{ display:"flex", alignItems:"center", justifyContent:"center", gap:10, marginBottom:14 }}>
+          <img src="/auris-logo.png" alt="Auris" style={{ height:36, objectFit:"contain" }} />
+          <span style={{ fontFamily:DISPLAY, fontSize:20, fontWeight:700, color:T.white }}>Wealth<span style={{ color:T.gold }}>Wise</span></span>
+        </div>
 
         {/* Title */}
-        <div style={{ textAlign:"center", marginBottom:28 }}>
-          <h2 style={{ fontFamily:DISPLAY, fontSize:24, fontWeight:700, color:T.white, marginBottom:6 }}>
+        <div style={{ textAlign:"center", marginBottom:16 }}>
+          <h2 style={{ fontFamily:DISPLAY, fontSize:20, fontWeight:700, color:T.white, marginBottom:4 }}>
             {mode === "register" ? "Create your account" : "Welcome back"}
           </h2>
-          <p style={{ fontSize:13, color:`${T.white}60` }}>
-            {mode === "register" ? "Sign in to access exclusive resources & services" : "Sign in to continue to WealthWise"}
+          <p style={{ fontSize:12, color:`${T.white}55` }}>
+            {mode === "register" ? "Sign up to save & access your financial plan" : "Sign in to continue to WealthWise"}
           </p>
         </div>
 
         {/* Fields */}
-        <div style={{ display:"flex", flexDirection:"column", gap:16 }}>
+        <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
           {mode === "register" && (
             <div>
               <label style={labelStyle}>Full Name</label>
@@ -230,41 +236,41 @@ const AuthModal = ({ show, onClose, onSignIn, onDemo }) => {
           </div>
         </div>
 
-        {error && <p style={{ color:"#ff6b6b", fontSize:13, marginTop:12, textAlign:"center" }}>{error}</p>}
+        {error && <p style={{ color:"#ff6b6b", fontSize:12, marginTop:8, textAlign:"center" }}>{error}</p>}
 
         {/* Primary CTA */}
-        <button onClick={handleSubmit} disabled={loading} className="btn-gold" style={{ width:"100%", padding:"14px", borderRadius:12, fontSize:16, fontWeight:700, marginTop:20, opacity: loading ? 0.7 : 1, cursor: loading ? "not-allowed" : "pointer" }}>
-          {loading ? <div style={{ width:20, height:20, border:`3px solid ${T.navy}40`, borderTopColor:T.navy, borderRadius:"50%", animation:"pulse 0.8s infinite", margin:"0 auto" }} /> : mode === "register" ? "Create Account" : "Sign In"}
+        <button onClick={handleSubmit} disabled={loading} className="btn-gold" style={{ width:"100%", padding:"11px", borderRadius:10, fontSize:15, fontWeight:700, marginTop:14, opacity: loading ? 0.7 : 1, cursor: loading ? "not-allowed" : "pointer" }}>
+          {loading ? <div style={{ width:18, height:18, border:`3px solid ${T.navy}40`, borderTopColor:T.navy, borderRadius:"50%", animation:"pulse 0.8s infinite", margin:"0 auto" }} /> : mode === "register" ? "Create Account" : "Sign In"}
         </button>
 
         {/* Divider */}
-        <div style={{ display:"flex", alignItems:"center", gap:12, margin:"18px 0" }}>
+        <div style={{ display:"flex", alignItems:"center", gap:10, margin:"12px 0" }}>
           <div style={{ flex:1, height:1, background:"rgba(255,255,255,0.1)" }} />
-          <span style={{ fontSize:12, color:`${T.white}40`, fontWeight:500 }}>or</span>
+          <span style={{ fontSize:11, color:`${T.white}35`, fontWeight:500 }}>or</span>
           <div style={{ flex:1, height:1, background:"rgba(255,255,255,0.1)" }} />
         </div>
 
         {/* Google */}
         <button onClick={handleGoogle} disabled={loading} style={{
-          width:"100%", padding:"13px 24px", borderRadius:12, border:"1.5px solid rgba(255,255,255,0.12)",
+          width:"100%", padding:"10px 24px", borderRadius:10, border:"1.5px solid rgba(255,255,255,0.12)",
           background:"rgba(255,255,255,0.05)", display:"flex", alignItems:"center", justifyContent:"center", gap:10,
-          fontSize:15, fontWeight:600, color:T.white, cursor:"pointer", transition:"all 0.3s"
+          fontSize:14, fontWeight:600, color:T.white, cursor:"pointer", transition:"all 0.3s"
         }}>
-          <svg width="20" height="20" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
           Continue with Google
         </button>
 
         {/* Demo */}
         <button onClick={onDemo} style={{
-          width:"100%", padding:"11px", borderRadius:12, border:`1px solid ${T.gold}30`,
-          background:"transparent", fontSize:13, fontWeight:600, color:`${T.gold}CC`,
-          cursor:"pointer", marginTop:10, transition:"all 0.2s"
+          width:"100%", padding:"9px", borderRadius:10, border:`1px solid ${T.gold}25`,
+          background:"transparent", fontSize:12, fontWeight:600, color:`${T.gold}BB`,
+          cursor:"pointer", marginTop:8, transition:"all 0.2s"
         }}>
           👀 Try Demo — No Sign In Required
         </button>
 
         {/* Toggle */}
-        <p style={{ textAlign:"center", marginTop:18, fontSize:13, color:`${T.white}50` }}>
+        <p style={{ textAlign:"center", marginTop:14, fontSize:12, color:`${T.white}45` }}>
           {mode === "register" ? "Already have an account? " : "Don't have an account? "}
           <span onClick={()=>{ setMode(mode==="register"?"signin":"register"); setError(""); }} style={{ color:T.goldLight, fontWeight:600, cursor:"pointer" }}>
             {mode === "register" ? "Sign In" : "Create Account"}
@@ -272,7 +278,7 @@ const AuthModal = ({ show, onClose, onSignIn, onDemo }) => {
         </p>
 
         {/* Close */}
-        <button onClick={onClose} style={{ position:"absolute", top:14, right:14, background:"rgba(255,255,255,0.08)", border:"none", borderRadius:8, width:30, height:30, display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", color:`${T.white}80`, fontSize:16 }}>✕</button>
+        <button onClick={onClose} style={{ position:"absolute", top:12, right:12, background:"rgba(255,255,255,0.08)", border:"none", borderRadius:8, width:28, height:28, display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", color:`${T.white}70`, fontSize:14 }}>✕</button>
       </div>
     </div>
   );
