@@ -11,9 +11,9 @@ const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const DEMO_MODE = false;
 
 // RAZORPAY CONFIG
-const RAZORPAY_KEY = "rzp_live_XXXXXXXXXXXXXXX"; // TODO: Replace with your Razorpay Key ID
-const PRO_PRICE = 49900; // Amount in paise (₹499)
-const PRO_PRICE_DISPLAY = "₹499";
+const RAZORPAY_KEY = "rzp_live_SbUM04RRgBP2dH";
+const PRO_PRICE = 99900; // Amount in paise (₹999)
+const PRO_PRICE_DISPLAY = "₹999";
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
