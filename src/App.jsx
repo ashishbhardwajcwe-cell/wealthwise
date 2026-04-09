@@ -1127,7 +1127,19 @@ const ReportView = ({ data, getAge, onBack, aiAnalysis, aiLoading, onRequestAI, 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 const SOCIALS = [
   {
+    name: "Website",
+    label: "auris8.com",
+    href: "https://auris8.com",
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm-1 17.93V18a1 1 0 00-2 0v1.93A8.001 8.001 0 014.07 13H6a1 1 0 000-2H4.07A8.001 8.001 0 0111 4.07V6a1 1 0 002 0V4.07A8.001 8.001 0 0119.93 11H18a1 1 0 000 2h1.93A8.001 8.001 0 0113 19.93z"/>
+      </svg>
+    ),
+    color: T.gold,
+  },
+  {
     name: "YouTube",
+    label: "YouTube @Auris8Wealth",
     href: "https://www.youtube.com/@Auris8Wealth",
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
@@ -1138,6 +1150,7 @@ const SOCIALS = [
   },
   {
     name: "Instagram",
+    label: "Instagram @auris8wealth",
     href: "https://www.instagram.com/auris8wealth/",
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
@@ -1148,6 +1161,7 @@ const SOCIALS = [
   },
   {
     name: "Facebook",
+    label: "Facebook",
     href: "https://www.facebook.com/profile.php?id=61576522393432",
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
@@ -1156,47 +1170,60 @@ const SOCIALS = [
     ),
     color: "#1877F2",
   },
+  {
+    name: "Topmate",
+    label: "Topmate — Book a Session",
+    href: "https://topmate.io/auris8/",
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 2a5 5 0 110 10A5 5 0 0112 2zm0 12c5.523 0 10 2.239 10 5v1a1 1 0 01-1 1H3a1 1 0 01-1-1v-1c0-2.761 4.477-5 10-5z"/>
+      </svg>
+    ),
+    color: "#7C3AED",
+  },
 ];
 
 const SiteFooter = () => (
-  <footer style={{ background:T.navy, padding:"28px 24px", borderTop:`1px solid ${T.gold}15` }}>
-    <div style={{ maxWidth:960, margin:"0 auto", display:"flex", flexDirection:"column", alignItems:"center", gap:16 }}>
+  <footer style={{ background:T.navy, padding:"32px 24px 24px", borderTop:`1px solid ${T.gold}15` }}>
+    <div style={{ maxWidth:960, margin:"0 auto", display:"flex", flexDirection:"column", alignItems:"center", gap:18 }}>
       {/* Brand */}
       <div style={{ display:"flex", alignItems:"center", gap:10 }}>
         <img src="/auris-logo.png" alt="Auris" style={{ height:32, objectFit:"contain" }} />
         <span style={{ fontFamily:DISPLAY, fontSize:18, color:T.white }}>Wealth<span style={{ color:T.gold }}>Wise</span></span>
       </div>
+
       {/* Social Icons */}
-      <div style={{ display:"flex", gap:14 }}>
+      <div style={{ display:"flex", gap:12, flexWrap:"wrap", justifyContent:"center" }}>
         {SOCIALS.map(s => (
-          <a key={s.name} href={s.href} target="_blank" rel="noopener noreferrer"
-            title={s.name}
+          <a key={s.name} href={s.href} target="_blank" rel="noopener noreferrer" title={s.label}
             style={{
-              width:40, height:40, borderRadius:10, display:"flex", alignItems:"center", justifyContent:"center",
-              background:`rgba(255,255,255,0.06)`, color:`rgba(255,255,255,0.7)`,
-              border:"1px solid rgba(255,255,255,0.08)", transition:"all 0.25s", textDecoration:"none"
+              width:42, height:42, borderRadius:10, display:"flex", alignItems:"center", justifyContent:"center",
+              background:"rgba(255,255,255,0.06)", color:"rgba(255,255,255,0.65)",
+              border:"1px solid rgba(255,255,255,0.08)", transition:"all 0.25s", textDecoration:"none",
             }}
-            onMouseEnter={e => { e.currentTarget.style.background = s.color + "22"; e.currentTarget.style.color = s.color; e.currentTarget.style.borderColor = s.color + "55"; }}
-            onMouseLeave={e => { e.currentTarget.style.background = "rgba(255,255,255,0.06)"; e.currentTarget.style.color = "rgba(255,255,255,0.7)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)"; }}
+            onMouseEnter={e => { e.currentTarget.style.background = s.color + "25"; e.currentTarget.style.color = s.color; e.currentTarget.style.borderColor = s.color + "60"; }}
+            onMouseLeave={e => { e.currentTarget.style.background = "rgba(255,255,255,0.06)"; e.currentTarget.style.color = "rgba(255,255,255,0.65)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)"; }}
           >
             {s.icon}
           </a>
         ))}
       </div>
-      {/* Links row */}
-      <div style={{ display:"flex", gap:20, flexWrap:"wrap", justifyContent:"center" }}>
+
+      {/* Text links */}
+      <div style={{ display:"flex", gap:16, flexWrap:"wrap", justifyContent:"center" }}>
         {SOCIALS.map(s => (
           <a key={s.name} href={s.href} target="_blank" rel="noopener noreferrer"
-            style={{ fontSize:12, color:`${T.white}45`, textDecoration:"none", transition:"color 0.2s" }}
+            style={{ fontSize:12, color:`${T.white}40`, textDecoration:"none", transition:"color 0.2s" }}
             onMouseEnter={e => e.currentTarget.style.color = s.color}
-            onMouseLeave={e => e.currentTarget.style.color = `${T.white}45`}
+            onMouseLeave={e => e.currentTarget.style.color = `${T.white}40`}
           >
-            {s.name === "YouTube" ? "YouTube @Auris8Wealth" : s.name === "Instagram" ? "Instagram @auris8wealth" : "Facebook"}
+            {s.label}
           </a>
         ))}
       </div>
+
       {/* Legal */}
-      <p style={{ color:`${T.white}30`, fontSize:12, textAlign:"center", marginTop:4 }}>
+      <p style={{ color:`${T.white}25`, fontSize:11, textAlign:"center", marginTop:4 }}>
         © 2026 Auris Pvt Ltd · WealthWise · Not SEBI registered · For informational purposes only
       </p>
     </div>
