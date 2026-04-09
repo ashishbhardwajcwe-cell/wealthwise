@@ -391,11 +391,6 @@ const Landing = ({ onGetStarted, onAuth }) => (
       <button onClick={onGetStarted} className="btn-gold" style={{ marginTop:28, padding:"16px 48px", borderRadius:14, fontSize:17 }}>Create My Plan — Free →</button>
     </section>
 
-    {/* Footer */}
-    <footer style={{ padding:"32px 24px", textAlign:"center", background:T.navy }}>
-      <span style={{ fontFamily:DISPLAY, fontSize:18, color:T.white }}>Wealth<span style={{ color:T.gold }}>Wise</span></span>
-      <p style={{ color:`${T.white}40`, fontSize:13, marginTop:8 }}>© 2026 WealthWise. Not SEBI registered. For informational purposes only.</p>
-    </footer>
   </div>
 );
 
@@ -1128,6 +1123,87 @@ const ReportView = ({ data, getAge, onBack, aiAnalysis, aiLoading, onRequestAI, 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // MAIN APP
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// SITE FOOTER (shown on all pages)
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+const SOCIALS = [
+  {
+    name: "YouTube",
+    href: "https://www.youtube.com/@Auris8Wealth",
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M23.5 6.2a3 3 0 00-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 00.5 6.2 31 31 0 000 12a31 31 0 00.5 5.8 3 3 0 002.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 002.1-2.1A31 31 0 0024 12a31 31 0 00-.5-5.8zM9.75 15.5v-7l6.5 3.5-6.5 3.5z"/>
+      </svg>
+    ),
+    color: "#FF0000",
+  },
+  {
+    name: "Instagram",
+    href: "https://www.instagram.com/auris8wealth/",
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
+      </svg>
+    ),
+    color: "#E1306C",
+  },
+  {
+    name: "Facebook",
+    href: "https://www.facebook.com/profile.php?id=61576522393432",
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.791-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.491 0-1.956.93-1.956 1.886v2.267h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/>
+      </svg>
+    ),
+    color: "#1877F2",
+  },
+];
+
+const SiteFooter = () => (
+  <footer style={{ background:T.navy, padding:"28px 24px", borderTop:`1px solid ${T.gold}15` }}>
+    <div style={{ maxWidth:960, margin:"0 auto", display:"flex", flexDirection:"column", alignItems:"center", gap:16 }}>
+      {/* Brand */}
+      <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+        <img src="/auris-logo.png" alt="Auris" style={{ height:32, objectFit:"contain" }} />
+        <span style={{ fontFamily:DISPLAY, fontSize:18, color:T.white }}>Wealth<span style={{ color:T.gold }}>Wise</span></span>
+      </div>
+      {/* Social Icons */}
+      <div style={{ display:"flex", gap:14 }}>
+        {SOCIALS.map(s => (
+          <a key={s.name} href={s.href} target="_blank" rel="noopener noreferrer"
+            title={s.name}
+            style={{
+              width:40, height:40, borderRadius:10, display:"flex", alignItems:"center", justifyContent:"center",
+              background:`rgba(255,255,255,0.06)`, color:`rgba(255,255,255,0.7)`,
+              border:"1px solid rgba(255,255,255,0.08)", transition:"all 0.25s", textDecoration:"none"
+            }}
+            onMouseEnter={e => { e.currentTarget.style.background = s.color + "22"; e.currentTarget.style.color = s.color; e.currentTarget.style.borderColor = s.color + "55"; }}
+            onMouseLeave={e => { e.currentTarget.style.background = "rgba(255,255,255,0.06)"; e.currentTarget.style.color = "rgba(255,255,255,0.7)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)"; }}
+          >
+            {s.icon}
+          </a>
+        ))}
+      </div>
+      {/* Links row */}
+      <div style={{ display:"flex", gap:20, flexWrap:"wrap", justifyContent:"center" }}>
+        {SOCIALS.map(s => (
+          <a key={s.name} href={s.href} target="_blank" rel="noopener noreferrer"
+            style={{ fontSize:12, color:`${T.white}45`, textDecoration:"none", transition:"color 0.2s" }}
+            onMouseEnter={e => e.currentTarget.style.color = s.color}
+            onMouseLeave={e => e.currentTarget.style.color = `${T.white}45`}
+          >
+            {s.name === "YouTube" ? "YouTube @Auris8Wealth" : s.name === "Instagram" ? "Instagram @auris8wealth" : "Facebook"}
+          </a>
+        ))}
+      </div>
+      {/* Legal */}
+      <p style={{ color:`${T.white}30`, fontSize:12, textAlign:"center", marginTop:4 }}>
+        © 2026 Auris Pvt Ltd · WealthWise · Not SEBI registered · For informational purposes only
+      </p>
+    </div>
+  </footer>
+);
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 export default function App() {
   const [page, setPage] = useState("landing"); // landing | dashboard
   const [user, setUser] = useState(null);
@@ -1191,6 +1267,7 @@ export default function App() {
       <AuthModal show={showAuth} onClose={()=>setShowAuth(false)} onSignIn={handleSignIn} onDemo={handleDemo} />
       {page === "landing" && <Landing onGetStarted={()=>{ if(user)setPage("dashboard"); else setShowAuth(true); }} onAuth={openAuth} />}
       {page === "dashboard" && <Dashboard user={user} isDemo={isDemo} onAuthClick={openAuth} onLogout={handleLogout} />}
+      <SiteFooter />
     </div>
   );
 }
