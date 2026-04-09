@@ -10,6 +10,11 @@ const SUPABASE_URL = "https://hbddsvwghboftjsgtate.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhiZGRzdndnaGJvZnRqc2d0YXRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1NDA0NjMsImV4cCI6MjA5MDExNjQ2M30.kTyLJ1WTh2jyau0cqGsaxMfGwhwBwQOGU-eyMJiyNEs";
 const DEMO_MODE = false;
 
+// RAZORPAY CONFIG
+const RAZORPAY_KEY = "rzp_live_XXXXXXXXXXXXXXX"; // TODO: Replace with your Razorpay Key ID
+const PRO_PRICE = 49900; // Amount in paise (₹499)
+const PRO_PRICE_DISPLAY = "₹499";
+
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // THEME — Luxury Financial Aesthetic
@@ -499,8 +504,7 @@ const Dashboard = ({ user, isDemo, onAuthClick, onLogout }) => {
     window.scrollTo({ top:0, behavior:"smooth" });
   };
 
-  const requestAIAnalysis = async () => {
-    if (isDemo) { onAuthClick?.(); return; }
+  const runAIAnalysis = async () => {
     setAiLoading(true);
     try {
       const { data: { session } } = await supabase.auth.getSession();
@@ -514,10 +518,8 @@ const Dashboard = ({ user, isDemo, onAuthClick, onLogout }) => {
         }
       );
       const result = await response.json();
-      if (result.error) { alert(result.error === "PRO_REQUIRED" ? "Upgrade to Pro for unlimited AI analyses" : result.error); setAiLoading(false); return; }
-      setAiAnalysis(result.analysis);
-      setAiLoading(false);
-      return;
+      if (result.error && result.error !== "PRO_REQUIRED") { alert(result.error); setAiLoading(false); return; }
+      if (!result.error) { setAiAnalysis(result.analysis); setAiLoading(false); return; }
     } catch (err) { console.error("AI error:", err); }
     // Fallback to simulated if Edge Function fails
     await new Promise(r => setTimeout(r, 2000));
@@ -550,6 +552,46 @@ const Dashboard = ({ user, isDemo, onAuthClick, onLogout }) => {
       ]
     });
     setAiLoading(false);
+  };
+
+  const requestAIAnalysis = () => {
+    if (isDemo) { onAuthClick?.(); return; }
+    if (!user) { onAuthClick?.(); return; }
+    // Open Razorpay checkout before running AI analysis
+    const options = {
+      key: RAZORPAY_KEY,
+      amount: PRO_PRICE,
+      currency: "INR",
+      name: "Auris Pvt Ltd",
+      description: "AI Pro Financial Analysis",
+      image: "/auris-logo.png",
+      prefill: {
+        name: user.user_metadata?.full_name || "",
+        email: user.email || "",
+        contact: user.user_metadata?.phone || "",
+      },
+      theme: { color: "#C9A84C" },
+      handler: async (response) => {
+        // Payment successful — store record & run AI
+        try {
+          await supabase.from("payments").insert([{
+            user_id: user.id,
+            payment_id: response.razorpay_payment_id,
+            amount: PRO_PRICE / 100,
+            currency: "INR",
+            status: "success",
+            product: "ai_pro_analysis",
+            created_at: new Date().toISOString(),
+          }]);
+        } catch (e) { console.error("Payment log error:", e); }
+        runAIAnalysis();
+      },
+      modal: {
+        ondismiss: () => { /* user closed checkout */ },
+      },
+    };
+    const rzp = new window.Razorpay(options);
+    rzp.open();
   };
 
   const getAge = () => {
@@ -1007,9 +1049,9 @@ const ReportView = ({ data, getAge, onBack, aiAnalysis, aiLoading, onRequestAI, 
                 Get AI-powered personalised recommendations — including tax optimisation, portfolio rebalancing, goal prioritisation, and risk analysis. Just like having a professional wealth advisor review your plan.
               </p>
               <button onClick={onRequestAI} className="btn-gold" style={{ padding:"14px 36px", borderRadius:12, fontSize:16 }}>
-                ✨ Generate AI Analysis
+                ✨ Get AI Analysis — {PRO_PRICE_DISPLAY}
               </button>
-              <p style={{ color:`${T.white}40`, fontSize:12, marginTop:12 }}>Free during beta • Will be a premium feature</p>
+              <p style={{ color:`${T.white}40`, fontSize:12, marginTop:12 }}>One-time payment • Personalised report for your profile</p>
             </div>
           )}
 
