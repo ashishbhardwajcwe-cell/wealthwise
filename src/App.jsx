@@ -292,12 +292,31 @@ const AuthModal = ({ show, onClose, onSignIn, onDemo }) => {
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // NAVBAR
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+const Navbar = // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// UPDATED NAVBAR — Replace the existing Navbar in App.jsx
+// Adds "Free Guide" download button (visible when user is logged in or in demo)
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 const Navbar = ({ user, isDemo, onAuthClick, onLogout, onLogoClick }) => (
   <nav className="glass" style={{ position:"sticky", top:0, zIndex:100, padding:"12px 24px", display:"flex", justifyContent:"space-between", alignItems:"center", borderBottom:`1px solid ${T.gold}15` }}>
     <div onClick={onLogoClick} style={{ display:"flex", alignItems:"center", gap:10, cursor:"pointer" }}>
       <img src="/auris-logo.png" alt="Auris" style={{ height:44, objectFit:"contain" }} />
     </div>
     <div style={{ display:"flex", alignItems:"center", gap:12 }}>
+      {/* FREE GUIDE BUTTON — shown when logged in or demo */}
+      {(user || isDemo) && (
+        <a href="/auris-financial-independence-playbook.pdf" download
+          style={{
+            padding:"8px 16px", borderRadius:10, fontSize:12, fontWeight:700,
+            background:`${T.gold}12`, color:T.gold, border:`1px solid ${T.gold}30`,
+            textDecoration:"none", display:"inline-flex", alignItems:"center", gap:6,
+            transition:"all 0.3s", cursor:"pointer", whiteSpace:"nowrap"
+          }}
+          onMouseEnter={e => { e.currentTarget.style.background = `${T.gold}25`; e.currentTarget.style.borderColor = T.gold; }}
+          onMouseLeave={e => { e.currentTarget.style.background = `${T.gold}12`; e.currentTarget.style.borderColor = `${T.gold}30`; }}
+        >
+          📘 Free Guide
+        </a>
+      )}
       {isDemo ? (
         <>
           <span style={{ fontSize:12, fontWeight:700, color:T.gold, background:`${T.gold}15`, padding:"4px 12px", borderRadius:20, letterSpacing:"0.05em" }}>DEMO MODE</span>
@@ -320,10 +339,7 @@ const Navbar = ({ user, isDemo, onAuthClick, onLogout, onLogoClick }) => (
     </div>
   </nav>
 );
-
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// LANDING PAGE
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 
 const Landing = ({ onGetStarted, onAuth }) => (
   <div>
     {/* Hero */}
