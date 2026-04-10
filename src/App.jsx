@@ -580,6 +580,13 @@ const Dashboard = ({ user, isDemo, onAuthClick, onLogout }) => {
         }),
       });
 
+      if (!orderRes.ok) {
+        const text = await orderRes.text();
+        console.error("Function error:", orderRes.status, text);
+        alert("Payment service error (HTTP " + orderRes.status + "). Please try again.");
+        return;
+      }
+
       const orderData = await orderRes.json();
 
       if (!orderData.payment_session_id) {
