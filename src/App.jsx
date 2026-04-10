@@ -10,9 +10,8 @@ const SUPABASE_URL = "https://hbddsvwghboftjsgtate.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhiZGRzdndnaGJvZnRqc2d0YXRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1NDA0NjMsImV4cCI6MjA5MDExNjQ2M30.kTyLJ1WTh2jyau0cqGsaxMfGwhwBwQOGU-eyMJiyNEs";
 const DEMO_MODE = false;
 
-// RAZORPAY CONFIG
-const RAZORPAY_KEY = "rzp_live_SbUM04RRgBP2dH";
-const PRO_PRICE = 99900; // Amount in paise (₹999)
+// CASHFREE CONFIG
+const PRO_PRICE = 999; // Amount in rupees (₹999)
 const PRO_PRICE_DISPLAY = "₹999";
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -565,44 +564,68 @@ const Dashboard = ({ user, isDemo, onAuthClick, onLogout }) => {
     setAiLoading(false);
   };
 
-  const requestAIAnalysis = () => {
+  const requestAIAnalysis = async () => {
     if (isDemo) { onAuthClick?.(); return; }
     if (!user) { onAuthClick?.(); return; }
-    // Open Razorpay checkout before running AI analysis
-    const options = {
-      key: RAZORPAY_KEY,
-      amount: PRO_PRICE,
-      currency: "INR",
-      name: "Auris Pvt Ltd",
-      description: "AI Pro Financial Analysis",
-      image: "/auris-logo.png",
-      prefill: {
-        name: user.user_metadata?.full_name || "",
-        email: user.email || "",
-        contact: user.user_metadata?.phone || "",
-      },
-      theme: { color: "#C9A84C" },
-      handler: async (response) => {
-        // Payment successful — store record & run AI
-        try {
-          await supabase.from("payments").insert([{
-            user_id: user.id,
-            payment_id: response.razorpay_payment_id,
-            amount: PRO_PRICE / 100,
-            currency: "INR",
-            status: "success",
-            product: "ai_pro_analysis",
-            created_at: new Date().toISOString(),
-          }]);
-        } catch (e) { console.error("Payment log error:", e); }
-        runAIAnalysis();
-      },
-      modal: {
-        ondismiss: () => { /* user closed checkout */ },
-      },
-    };
-    const rzp = new window.Razorpay(options);
-    rzp.open();
+
+    // Create Cashfree order via Supabase Edge Function (secret key stays server-side)
+    try {
+      const session = await supabase.auth.getSession();
+      const token = session.data.session?.access_token;
+      if (!token) { onAuthClick?.(); return; }
+
+      const orderRes = await fetch(SUPABASE_URL + "/functions/v1/create-cashfree-order", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + token,
+          "apikey": SUPABASE_ANON_KEY,
+        },
+        body: JSON.stringify({
+          order_amount: PRO_PRICE,
+          order_currency: "INR",
+          order_note: "AI Pro Financial Analysis",
+        }),
+      });
+
+      const orderData = await orderRes.json();
+
+      if (!orderData.payment_session_id) {
+        console.error("Cashfree order creation failed:", orderData);
+        alert("Payment initialization failed. Please try again.");
+        return;
+      }
+
+      // Initialize Cashfree checkout
+      const cashfree = window.Cashfree({ mode: "production" });
+      cashfree.checkout({
+        paymentSessionId: orderData.payment_session_id,
+        redirectTarget: "_modal",
+      }).then(async (result) => {
+        if (result.error) {
+          console.error("Payment error:", result.error);
+          return;
+        }
+        if (result.paymentDetails) {
+          // Payment successful — store record & run AI
+          try {
+            await supabase.from("payments").insert([{
+              user_id: user.id,
+              payment_id: orderData.cf_order_id || orderData.order_id,
+              amount: PRO_PRICE,
+              currency: "INR",
+              status: "success",
+              product: "ai_pro_analysis",
+              created_at: new Date().toISOString(),
+            }]);
+          } catch (e) { console.error("Payment log error:", e); }
+          runAIAnalysis();
+        }
+      });
+    } catch (err) {
+      console.error("Payment error:", err);
+      alert("Payment failed. Please try again.");
+    }
   };
 
   const getAge = () => {
