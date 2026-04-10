@@ -11,7 +11,6 @@ const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const DEMO_MODE = false;
 
 // CASHFREE CONFIG
-const CASHFREE_APP_ID = "CF1256342D7CCFOCTRIMC739NPOF0";
 const PRO_PRICE = 999; // Amount in rupees (₹999)
 const PRO_PRICE_DISPLAY = "₹999";
 
@@ -569,35 +568,22 @@ const Dashboard = ({ user, isDemo, onAuthClick, onLogout }) => {
     if (isDemo) { onAuthClick?.(); return; }
     if (!user) { onAuthClick?.(); return; }
 
-    // Create Cashfree order via Supabase edge function, then open checkout
+    // Create Cashfree order via Supabase Edge Function (secret key stays server-side)
     try {
-      const orderId = "order_" + Date.now() + "_" + Math.random().toString(36).substr(2, 9);
-      const customerName = user.user_metadata?.full_name || "Customer";
-      const customerEmail = user.email || "";
-      const customerPhone = user.user_metadata?.phone || "9999999999";
+      const session = await supabase.auth.getSession();
+      const token = session.data.session?.access_token;
+      if (!token) { onAuthClick?.(); return; }
 
-      // Create order via Cashfree API
-      const orderRes = await fetch("https://api.cashfree.com/pg/orders", {
+      const orderRes = await fetch(SUPABASE_URL + "/functions/v1/create-cashfree-order", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "x-client-id": CASHFREE_APP_ID,
-          "x-client-secret": CASHFREE_SECRET_KEY,
-          "x-api-version": "2023-08-01",
+          "Authorization": "Bearer " + token,
+          "apikey": SUPABASE_ANON_KEY,
         },
         body: JSON.stringify({
-          order_id: orderId,
           order_amount: PRO_PRICE,
           order_currency: "INR",
-          customer_details: {
-            customer_id: user.id,
-            customer_name: customerName,
-            customer_email: customerEmail,
-            customer_phone: customerPhone,
-          },
-          order_meta: {
-            return_url: window.location.origin + "?order_id={order_id}&order_token={order_token}",
-          },
           order_note: "AI Pro Financial Analysis",
         }),
       });
@@ -625,7 +611,7 @@ const Dashboard = ({ user, isDemo, onAuthClick, onLogout }) => {
           try {
             await supabase.from("payments").insert([{
               user_id: user.id,
-              payment_id: orderData.cf_order_id || orderId,
+              payment_id: orderData.cf_order_id || orderData.order_id,
               amount: PRO_PRICE,
               currency: "INR",
               status: "success",
