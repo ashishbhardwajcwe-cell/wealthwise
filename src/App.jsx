@@ -582,8 +582,10 @@ const Dashboard = ({ user, isDemo, onAuthClick, onLogout }) => {
 
       if (!orderRes.ok) {
         const text = await orderRes.text();
+        let errMsg = text;
+        try { const j = JSON.parse(text); errMsg = j.details || j.error || text; } catch(e) {}
         console.error("Function error:", orderRes.status, text);
-        alert("Payment service error (HTTP " + orderRes.status + "). Please try again.");
+        alert("Payment error: " + errMsg);
         return;
       }
 

@@ -55,16 +55,20 @@ exports.handler = async (event) => {
       }),
     });
 
-    const cfData = await cfRes.json();
+    const cfText = await cfRes.text();
+    let cfData;
+    try { cfData = JSON.parse(cfText); } catch (e) {
+      return { statusCode: 502, headers, body: JSON.stringify({ error: "Cashfree returned non-JSON", details: cfText.substring(0, 500) }) };
+    }
 
     if (!cfData.payment_session_id) {
-      console.error("Cashfree API response:", JSON.stringify(cfData));
+      console.error("Cashfree API response:", cfText);
       return {
         statusCode: 502,
         headers,
         body: JSON.stringify({
           error: "Cashfree order creation failed",
-          details: cfData.message || cfData.type || JSON.stringify(cfData),
+          details: cfData.message || cfData.type || cfText.substring(0, 500),
         }),
       };
     }
