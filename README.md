@@ -30,7 +30,7 @@ Open http://localhost:5173
 - 5-Year Cashflow Projections
 - AI Pro Analysis toggle (premium feature)
 - Google Sign-In ready (Supabase)
-- Razorpay payment integration ready
+- Cashfree payment integration ready
 
 ## Tech Stack
 
@@ -38,4 +38,4 @@ Open http://localhost:5173
 - Recharts (charts)
 - Supabase (auth + database)
 - Claude API (AI analysis)
-- Razorpay (payments)
+- Cashfree (payments)
