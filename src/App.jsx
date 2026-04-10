@@ -291,10 +291,6 @@ const AuthModal = ({ show, onClose, onSignIn, onDemo }) => {
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // NAVBAR
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-const Navbar = // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// UPDATED NAVBAR — Replace the existing Navbar in App.jsx
-// Adds "Free Guide" download button (visible when user is logged in or in demo)
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 const Navbar = ({ user, isDemo, onAuthClick, onLogout, onLogoClick }) => (
   <nav className="glass" style={{ position:"sticky", top:0, zIndex:100, padding:"12px 24px", display:"flex", justifyContent:"space-between", alignItems:"center", borderBottom:`1px solid ${T.gold}15` }}>
     <div onClick={onLogoClick} style={{ display:"flex", alignItems:"center", gap:10, cursor:"pointer" }}>
