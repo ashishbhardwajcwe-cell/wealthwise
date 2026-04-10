@@ -564,23 +564,19 @@ const Dashboard = ({ user, isDemo, onAuthClick, onLogout }) => {
     if (isDemo) { onAuthClick?.(); return; }
     if (!user) { onAuthClick?.(); return; }
 
-    // Create Cashfree order via Supabase Edge Function (secret key stays server-side)
+    // Create Cashfree order via Netlify Function (secret key stays server-side)
     try {
-      const session = await supabase.auth.getSession();
-      const token = session.data.session?.access_token;
-      if (!token) { onAuthClick?.(); return; }
-
-      const orderRes = await fetch(SUPABASE_URL + "/functions/v1/create-cashfree-order", {
+      const orderRes = await fetch("/.netlify/functions/create-cashfree-order", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer " + token,
-          "apikey": SUPABASE_ANON_KEY,
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           order_amount: PRO_PRICE,
           order_currency: "INR",
           order_note: "AI Pro Financial Analysis",
+          customer_id: user.id,
+          customer_name: user.user_metadata?.full_name || "Customer",
+          customer_email: user.email || "",
+          customer_phone: user.user_metadata?.phone || "9999999999",
         }),
       });
 
@@ -588,7 +584,7 @@ const Dashboard = ({ user, isDemo, onAuthClick, onLogout }) => {
 
       if (!orderData.payment_session_id) {
         console.error("Cashfree order creation failed:", orderData);
-        alert("Payment initialization failed. Please try again.");
+        alert("Payment initialization failed: " + (orderData.details || orderData.error || "Unknown error"));
         return;
       }
 
@@ -620,7 +616,7 @@ const Dashboard = ({ user, isDemo, onAuthClick, onLogout }) => {
       });
     } catch (err) {
       console.error("Payment error:", err);
-      alert("Payment failed. Please try again.");
+      alert("Payment failed: " + err.message);
     }
   };
 
